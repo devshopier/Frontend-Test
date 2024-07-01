@@ -1,0 +1,196 @@
+<script src="https://cdn.tailwindcss.com"></script>
+
+<div class="custom-item-slider">
+    <div class="hidden sm:block relative py-20 w-full">
+        <div class="flex flex-col gap-9">
+            <div class="flex justify-between px-40">
+                {% if section.settings.heading %}
+                    {{ section.settings.heading }}
+                {% endif %}
+                {% if section.settings.button_text %}
+                    <div class="text-[14px] text-[#5C553A] font-semibold flex justify-between items-center gap-2 ">
+                        <a href="{{ section.settings.button_link }}">{{ section.settings.button_text }}{% render 'icon-arrow-right' %}</a>                    
+                    </div>
+                {% endif %}
+            </div>
+            <div class="w-screen ps-40">
+                <div class="flex gap-6 overflow-auto pb-8 pr-6">
+                    {% for block in section.blocks %}
+                        <a href="{{ block.settings.product.url }}" class="flex flex-col gap-4 scroll-ps-40">
+                            <div class="relative w-[355px] h-[355px] rounded-[10px] overflow-hidden">
+                                <div class="relative group h-full">
+                                    <img src="{{ block.settings.product.featured_image |  image_url }}" class="rounded-[10px] w-full h-full object-cover transition-opacity duration-300 opacity-100 group-hover:opacity-0 absolute" />
+                                    {% if block.settings.product.media[1] %}
+                                        <img src="{{ block.settings.product.media[1] | image_url }}" class="rounded-[10px] w-full h-full object-cover transition-opacity duration-300 opacity-0 group-hover:opacity-100" />
+                                    {% endif %}        
+                                </div>
+                                <div
+                                    class="absolute top-2 left-2 rounded-[100px] border px-2 py-1 font-normal text-[10px] border-black bg-white">
+                                    BEST SELLER
+                                </div>
+                                <div
+                                    class="absolute top-2 right-2 rounded-[100px] border px-2 py-1 font-normal text-[10px] text-white border-black bg-[#5C7962]">
+                                    SAVE 15%
+                                </div>
+                            </div>
+                            <div class="flex flex-col gap-5">
+                                <div class="text-[18px] text-[#1C1D1D] uppercase tracking-tighter font-semibold">{{ block.settings.product.title }}</div>
+                                <div class="flex gap-1 justify-start items-center">
+                                    <div class="flex gap-[2px]">
+                                        {% render 'icon-custom-review' %}
+                                    </div>
+                                    <div class="font-normal text-xs text-[#707070]">1,234 Reviews</div>
+
+                                </div>
+                                <div class="font-medium text-[16px] text-[#1C1D1D]">{{ block.settings.product.price | money }}</div>
+                            </div>
+                        </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="sm:hidden relative w-full h-full py-9 px-6">
+        <div class="flex flex-col gap-5">
+            <div class="flex flex-col gap-6">
+                {% if section.settings.heading %}                
+                    <div class="flex justify-center font-bold text-[28px]">{{ section.settings.heading }}</div>
+                {% endif %}
+                <div class="grid grid-cols-2 gap-3 item__content show-more slide-show-more">
+                    {% for block in section.blocks %}
+                        <a href="{{ block.settings.product.url }}" class="flex flex-col gap-4 scroll-ps-40 item-height">
+                            <div class="relative h-[159px]">
+                                <img src="{{ block.settings.product.featured_image |  image_url }}" class="rounded-[10px] w-full h-full object-cover" />
+                                <div
+                                    class="absolute top-2 left-2 rounded-[100px] border px-2 py-1 font-normal text-[8px] border-black bg-white">
+                                    BEST SELLER
+                                </div>
+                                <div
+                                    class="absolute top-2 right-2 rounded-[100px] border px-2 py-1 font-normal text-[8px] text-white border-black bg-[#5C7962]">
+                                    SAVE 15%
+                                </div>
+                            </div>
+                            <div class="flex flex-col gap-2">
+                                <div class="font-normal text-[16px] text-[#1C1D1D] uppercase tracking-tighter font-semibold">{{ block.settings.product.title }}</div>
+                                <div class="flex gap-1 justify-start items-center">
+                                    <div class="flex gap-[2px]">
+                                        {% render 'icon-custom-review' %}
+                                    </div>
+                                    <div class="font-normal text-[11px] text-[#707070]">1,234 Reviews</div>
+
+                                </div>
+                                <div class="font-medium text-[16px] text-[#1C1D1D]">{{ block.settings.product.price | money }}</div>
+                            </div>
+                        </a>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="w-full rounded-[100px] px-6 py-4 bg-[#1C1D1D] text-white flex justify-center items-center btn-show-more"
+                id="read-more">Show More</div>
+        </div>
+    </div>
+</div>
+
+<style>
+    ::-webkit-scrollbar {
+        height:8px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background-color: #231F20;
+        border-radius: 10px;
+        border-top: 2px solid #fff;
+        border-bottom: 2px solid #fff;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        border: 1px solid #231F20;
+        cursor: pointer;
+    }
+
+    ::-webkit-scrollbar-track {
+        background-color: #DDD6D7;
+        border-bottom-left-radius: 12px;
+        border-top-left-radius: 12px;
+        border: 2px solid #fff;
+    }
+
+    .slide-show-more {
+        overflow: hidden; 
+        transition-duration: 1s;
+    }
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var box = document.querySelector(".slide-show-more");
+        var item_height = document.querySelector(".item-height").clientHeight;
+        var show_btn = document.querySelector(".btn-show-more");
+        var product_total_num = 10;
+        var product_row_index = 2;
+        var initial_product_column_index = 2;
+        var pb_10 = 10;
+        var toggle = 1;
+        var minimumHeight = item_height * initial_product_column_index + pb_10; // max height in pixels
+        var initialHeight = box.clientHeight;
+
+        if (initialHeight > minimumHeight) {
+            box.style.height = minimumHeight + "px";
+        }
+
+        document.querySelector("#read-more").addEventListener('click', function () {
+            if (toggle) {
+                box.style.height = product_total_num / product_row_index * item_height + pb_10 + "px";
+                toggle = 0;
+                show_btn.textContent = "Show Less";
+            } else {
+                box.style.height = minimumHeight + pb_10 + "px";
+                toggle = 1;
+                show_btn.textContent = "Show More";
+            }
+        });
+    });
+</script>
+
+{% schema %}
+    {
+      "name": "Custom Item Slider",
+      "settings": [
+            {
+                "type": "text",
+                "id": "heading",
+                "label": "Heading",
+                "default": "Best Sellers"   
+            },
+            {
+                "type": "text",
+                "id": "button_text",
+                "label": "Button Text",
+                "default": "Shop All Best Sellers"   
+            },
+            {
+                "type": "url",
+                "id": "button_link",
+                "label": "Button Link"   
+            }
+      ],
+      "blocks": [
+        {
+            "type": "product",
+            "name": "Product Item",
+            "settings": [
+                {
+                    "type": "product",
+                    "id": "product",
+                    "label": "Product"
+                }
+            ]
+        }
+      ],
+      "presets": [
+        {
+          "name": "Custom Item Slider"
+        }
+      ]
+    }
+{% endschema %}
